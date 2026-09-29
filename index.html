@@ -7,14 +7,27 @@
 <!-- Home-screen identity. iOS ignores data: URIs for apple-touch-icon, so these
      are real files sitting beside index.html; the app still runs from the single
      file alone, just with the browser's default icon. -->
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=2">
+<link rel="apple-touch-icon" sizes="167x167" href="icon-167.png?v=2">
+<link rel="apple-touch-icon" sizes="152x152" href="icon-152.png?v=2">
+<link rel="apple-touch-icon" sizes="120x120" href="icon-120.png?v=2">
+<link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png?v=2">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2">
+<link rel="manifest" href="manifest.webmanifest?v=2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Region Forge">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#2F6146">
+<script>/* set before first paint, so there is no flash of the wrong theme */
+(function(){var t=null;try{t=localStorage.getItem('rf.theme')}catch(e){}
+if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
+document.documentElement.setAttribute('data-theme',t)})();</script>
+<!-- GitHub Pages cannot send headers, so the policy lives here. Inline scripts
+     and styles are the whole app, hence 'unsafe-inline'; what matters is that
+     outbound connections are limited to the sprite CDNs and the one AI endpoint,
+     so an injection cannot phone anything else home. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://raw.githubusercontent.com https://cdn.jsdelivr.net; connect-src 'self' https://generativelanguage.googleapis.com https://api.openai.com https://openrouter.ai; object-src 'none'; base-uri 'none'; form-action 'none'">
 <style>
 :root{
   --ink:#211E19; --ink-2:#4A443A; --ink-3:#7C7361;
@@ -275,11 +288,127 @@ ol.steps li.fail{color:var(--rust)}ol.steps li.fail .mk{color:var(--rust)}
   -webkit-overflow-scrolling:touch}
 #tssheet{display:block;image-rendering:pixelated;cursor:crosshair}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===================== THEMES =====================
+   Two looks, one layout. Light is a survey plate: warm paper, a serif for the
+   region's name, a plain sans for everything you read in passing, sharp edges
+   and a single rule where a section begins. Dark is a working tool: near-black
+   ground, one sans throughout, soft corners, and panels told apart by being a
+   shade lighter rather than by lines. The pixel art is the same in both and is
+   the only strong colour on screen in either.
+   Both drop what the old look leaned on: tracked-out capitals on every label,
+   monospace for anything small, and eight near-identical sizes of grey. */
+:root,:root[data-theme="light"]{
+  --paper:#F4EFE4; --card:#FBF8F1; --card-2:#F0EADD;
+  --ink:#1D2B2A; --ink-2:#3C4A48; --ink-3:#6B7875; --rule:#D8CFBE;
+  --moss:#2F6146; --moss-ink:#F7F3EA; --moss-edge:#244C37;
+  --field:#FFFDF8; --press:#EAE2D2;
+  --ui:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --disp:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --body:var(--ui); --data:var(--ui);
+  --r:2px; --panel-edge:1px solid var(--rule); --panel-top:2px solid var(--ink);
+  color-scheme:light}
+:root[data-theme="dark"]{
+  --paper:#0F1311; --card:#171C1A; --card-2:#1F2522;
+  --ink:#E5EAE7; --ink-2:#B9C2BE; --ink-3:#7F8C86; --rule:#2A322E;
+  --moss:#3F7D5C; --moss-ink:#FFFFFF; --moss-edge:#3F7D5C;
+  --field:#101513; --press:#232A27;
+  --disp:var(--ui);
+  --r:10px; --panel-edge:1px solid transparent; --panel-top:1px solid transparent;
+  color-scheme:dark}
+
+body{font-family:var(--ui);background:var(--paper);background-image:none;
+  -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+:root[data-theme="light"] body{
+  background-image:radial-gradient(rgba(120,105,70,.035) 1px,transparent 1px);background-size:3px 3px}
+
+/* the masthead: a name, not a banner */
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+header>div.hd{min-width:0}
+h1{font-family:var(--disp);font-size:26px;font-weight:600;letter-spacing:-.015em;
+  text-transform:none;line-height:1.1}
+:root[data-theme="dark"] h1{font-size:22px;font-weight:650;letter-spacing:-.02em}
+.rulebar{display:none}
+.sub{font-family:var(--ui);font-size:13px;letter-spacing:0;text-transform:none;
+  color:var(--ink-3);margin-top:4px}
+#themebtn{width:auto;flex:0 0 auto;padding:7px 12px;font-size:13px;margin-bottom:2px}
+
+/* panels */
+.sheet{background:var(--card);border:var(--panel-edge);border-top:var(--panel-top);
+  border-radius:var(--r);padding:16px 15px}
+:root[data-theme="dark"] .sheet{box-shadow:0 1px 0 rgba(255,255,255,.03) inset}
+.sheet>h2{font-family:var(--ui);font-size:15px;font-weight:650;letter-spacing:-.005em;
+  text-transform:none;color:var(--ink);margin:0 0 12px}
+.sheet>h2::after{display:none}
+
+/* forms */
+label{font-family:var(--ui);font-size:13px;letter-spacing:0;text-transform:none;
+  color:var(--ink-2);font-weight:500}
+input,textarea,select{background:var(--field);border:1px solid var(--rule);color:var(--ink);
+  font-family:var(--ui);font-size:15px;border-radius:var(--r)}
+textarea{font-family:var(--ui)}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--moss);outline-offset:-1px}
+
+/* buttons: sentence case, a real size, one weight */
+button{background:var(--moss);color:var(--moss-ink);border:1px solid var(--moss-edge);
+  font-family:var(--ui);font-size:15px;font-weight:600;letter-spacing:0;text-transform:none;
+  border-radius:var(--r)}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule)}
+:root[data-theme="dark"] button.ghost{background:var(--card-2);border-color:transparent}
+button:active{filter:brightness(.94)}
+
+/* reading matter */
+.note{font-family:var(--ui);font-size:13px;color:var(--ink-3);line-height:1.5}
+.kv{font-family:var(--ui);font-size:14px;border-bottom:1px solid var(--rule);padding:7px 0}
+:root[data-theme="dark"] .kv{border-bottom-color:rgba(255,255,255,.05)}
+.kv>span:first-child{font-size:13.5px;letter-spacing:0;text-transform:none;color:var(--ink-3)}
+.kv>span:last-child{font-weight:600;color:var(--ink)}
+
+/* party and box cards */
+.card{border-radius:var(--r)}
+.card:active{background:var(--press)}
+.card .nm{font-family:var(--ui);font-size:14.5px;font-weight:650}
+.card .lv,.card .rt{font-family:var(--ui);font-size:12.5px}
+.kbhint{font-family:var(--ui);font-size:12.5px;letter-spacing:0;text-transform:none}
+
+/* the region's own name is the one place the display face earns its keep */
+#rtitle,#rname,.regionname{font-family:var(--disp)}
+
+/* The old look forced capitals everywhere, so much of the source text is
+   written lower-case. Sentence case restores the first letter only — "badges"
+   becomes "Badges", not "BADGES" and not "Badges Won". */
+.kv>span:first-child::first-letter,button::first-letter,
+.statgrid .lbl::first-letter,#statpanel h4::first-letter,
+.screenlabel::first-letter{text-transform:uppercase}
+.kv>span:first-child,button,.statgrid .lbl,#statpanel h4{display:inline-block}
+.kv>span:first-child{display:block}
+button{display:inline-block}
+button.full,.row>button{display:block}
+
+/* the rest of the tracked capitals */
+.screenlabel{font-family:var(--ui);font-size:12px;letter-spacing:0;text-transform:none}
+#storyinner h3{font-family:var(--ui);font-size:15px;letter-spacing:0;text-transform:none;font-weight:650}
+#statpanel h4{font-family:var(--ui);font-size:13px;letter-spacing:0;text-transform:none;font-weight:650}
+.statgrid .lbl{font-family:var(--ui);font-size:12px;letter-spacing:0;text-transform:none}
+
+/* notices follow the theme instead of always being dark ink */
+.toast{font-family:var(--ui);font-size:14px;border-radius:var(--r);
+  background:var(--ink);color:var(--paper)}
+:root[data-theme="dark"] .toast{background:#E5EAE7;color:#0F1311}
+
+/* The battle tray sits on card-2, so a button drawn in card-2 vanishes into it.
+   Buttons there take the card surface instead, with a visible edge, and the
+   four-across action row keeps its labels on one line. */
+#bactions button.ghost{background:var(--card);border:1px solid var(--rule)}
+:root[data-theme="dark"] #bactions button.ghost{border-color:rgba(255,255,255,.09)}
+#bactions .row button{font-size:14px;padding:10px 6px;white-space:nowrap}
+.moves button{font-family:var(--ui);font-size:14px;border-radius:var(--r)}
+.moves button small{font-family:var(--ui);font-size:11.5px}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><h1>Region Forge</h1><div class="rulebar"></div><p class="sub" id="hdr"></p></header>
+<header><div class="hd"><h1>Region Forge</h1><div class="rulebar"></div><p class="sub" id="hdr"></p></div><button id="themebtn" class="ghost" aria-label="Switch between light and dark">Dark</button></header>
 
 <div class="sheet" id="setup">
   <h2>Survey parameters</h2>
@@ -291,8 +420,11 @@ ol.steps li.fail{color:var(--rust)}ol.steps li.fail .mk{color:var(--rust)}
     <option value="openrouter">OpenRouter (free models available)</option>
   </select>
   <div id="keywrap" class="hide">
-    <label for="key">API key — stored in this browser only</label>
+    <label for="key">API key — your key, kept in this tab only</label>
     <input id="key" type="password" autocomplete="off" spellcheck="false">
+    <p class="note">It is held for this browser tab and forgotten when you close it.
+      It goes straight from your browser to the provider you picked — nothing passes
+      through any server of mine. <a href="#" id="clearkey">Forget it now</a>.</p>
     <label for="model">Model</label><input id="model" spellcheck="false">
   </div>
   <label for="premise">Premise — optional</label>
@@ -347,6 +479,10 @@ ol.steps li.fail{color:var(--rust)}ol.steps li.fail .mk{color:var(--rust)}
       <div id="stick" class="stick"><div id="knob" class="knob"></div></div>
       <button id="actBtn" class="actbtn">A</button>
       <p class="kbhint">arrow keys to walk · shift to run · enter to act · or click where you want to go</p>
+      <div class="row" style="margin-top:8px;align-items:center;gap:10px">
+        <button id="mutebtn" class="ghost" style="flex:0 0 auto">♪ sound: off</button>
+        <input id="vol" type="range" min="0" max="100" value="28" style="flex:1" aria-label="music volume">
+      </div>
     </div>
     <div class="row" style="margin-top:11px"><button id="openparty" class="ghost">Party</button>
       <button id="opendex" class="ghost">Pokédex</button>
@@ -2832,6 +2968,7 @@ function enterNode(n,fromDir){
   if(n.encounters?.length)h+=n.encounters.map(e=>
     `<div class="kv"><span>${e.species}</span><span>Lv ${e.min}–${e.max} · ${e.rarity}%</span></div>`).join('');
   if(inf)inf.innerHTML=h;
+  try{musicSync()}catch(e){}
   /* The story gets its chance wherever you are — the rival will find you on a
      route as readily as in a town, and the team is waiting where word said. */
   if(!n.league)setTimeout(()=>{try{announceTeam();checkStory()}catch(e){}},420);
@@ -3201,6 +3338,10 @@ function teamSiteFor(stage){
     (n.cls==='City')&&!used.includes(n.id));
   /* The leader takes a city; operatives prefer the out-of-the-way places. */
   const boss=stage>=4;
+  /* their opening move happens where their stated goal says it will */
+  if(stage===1&&REGION.lorePlace!=null&&!used.includes(REGION.lorePlace)){
+    const lp=REGION.nodes.find(n=>n.id===REGION.lorePlace);
+    if(lp)return lp}
   const poolA=boss?(cities.length?cities:marks):(marks.length?marks:cities);
   const pool=poolA.length?poolA:REGION.nodes.filter(n=>n.kind==='town'&&!n.league);
   if(!pool.length)return null;
@@ -3613,6 +3754,7 @@ function setBackdrop(){
   el.style.background=backdropCSS(hab);
   el.dataset.hab=hab}
 function openBattle(foe,isTrainer,gym,trainer){
+  BT.over=false;
   BT.on=true;BT.foe=foe;BT.me=lead();BT.isTrainer=isTrainer;BT.gym=gym||BT.gym;BT.trainer=trainer||BT.trainer;
   BT.canCatch=!isTrainer;BT.usedPhen=false;G.seen.add(foe.sp);
   clearInput();heldKeys.clear();
@@ -3624,6 +3766,7 @@ function openBattle(foe,isTrainer,gym,trainer){
   BT.screens={me:{reflect:0,light:0,veil:0},foe:{reflect:0,light:0,veil:0}};
   BT.troom=0;
   setBackdrop();
+  try{musicSync()}catch(e){}
   bEl.classList.remove('hide');
   if(!isTrainer&&!BT.raid)document.getElementById('blog').innerHTML='';
   if(!BT.raid)blog(`${isTrainer?'':'A wild '}${SPECIES[foe.sp][SP.NAME]} ${isTrainer?'was sent out!':'appeared!'}`);
@@ -3736,7 +3879,7 @@ function showActions(){
       ${BT.canCatch?`<button class="ghost" id="throw">Ball (${
         (G.items?.uball||0)>0?`U×${G.items.uball}`:(G.items?.gball||0)>0?`G×${G.items.gball}`:G.balls
       })</button>`:''}
-      ${(G.items?.potion||0)+(G.items?.spotion||0)>0?`<button class="ghost" id="bag">Bag</button>`:''}
+      ${['potion','spotion','hpotion','revive'].some(k=>(G.items?.[k]||0)>0)?`<button class="ghost" id="bag">Bag</button>`:''}
       ${phen?`<button class="ghost" id="phen">Phenomenon</button>`:''}
       <button class="ghost" id="bstats">Stats</button>
       <button class="ghost" id="swap">Switch</button>
@@ -3831,7 +3974,13 @@ function showBag(){
       if(BT.me.hp>=BT.me.stats[0]){toast('Already at full health.');return}
       turn({kind:'item',item:kind})};
     mv.appendChild(b)};
-  add('potion','Potion',60);add('spotion','Super Potion',120);
+  add('potion','Potion',60);add('spotion','Super Potion',120);add('hpotion','Hyper Potion',200);
+  /* Revive is for whoever is lying fainted on the bench, not the one out front */
+  if((G.items?.revive||0)>0&&G.party.some(m=>m!==BT.me&&m.hp<=0)){
+    const rb=document.createElement('button');
+    rb.innerHTML=`Revive<small>wakes a fainted team-mate at half health · ×${G.items.revive}</small>`;
+    rb.onclick=()=>turn({kind:'item',item:'revive'});
+    mv.appendChild(rb)}
   const back=document.createElement('button');
   back.innerHTML='Back<small>to the moves</small>';
   back.onclick=showActions;mv.appendChild(back)}
@@ -3998,12 +4147,18 @@ function useStatusMove(att,def,mv,mine){
   blog('Nothing happened.')}
 
 function resolveTurn(action){
+  /* Once a battle is decided it stays decided. The screen takes a moment to
+     close, and any turn resolved in that moment used to run the victory code
+     again — the same badge awarded thirty times over, and the EXP, EVs and
+     prize money with it. A finished battle now ignores every further turn. */
+  if(!BT.on||BT.over)return;
   if(action.kind==='ball'){
     /* the best ball you carry is thrown first: ultra, great, then basic */
     let ballMul=1,ballName='Poké Ball';
     if(G.items&&G.items.uball>0){G.items.uball--;ballMul=2;ballName='Ultra Ball'}
     else if(G.items&&G.items.gball>0){G.items.gball--;ballMul=1.5;ballName='Great Ball'}
-    else G.balls--;
+    else if(G.balls>0)G.balls--;
+    else{blog('You are out of Poké Balls.');showActions();return}
     const bonus=(BT.raid?3:1)*ballMul;
     const r=tryCatch(BT.foe,bonus,Math.random);
     blog(`You threw a ${ballName}… ${r.shakes} shake${r.shakes===1?'':'s'}.`);
@@ -4013,6 +4168,7 @@ function resolveTurn(action){
       blog(`Gotcha! ${SPECIES[c.sp][SP.NAME]} was caught!`);
       if(G.party.length<6)G.party.push(c);else{G.box.push(c);blog('It was sent to the box.')}
       if(BT.raid&&BT.den)BT.den.cleared=true;
+      BT.over=true;
       endBattle(true);return}
     blog('It broke free!')
   } else if(action.kind==='move'||action.kind==='skip'||action.kind==='item'){
@@ -4022,12 +4178,20 @@ function resolveTurn(action){
        Baton Pass continuation, deliberately matches neither branch: the foe
        already moved this turn.) */
     if(action.kind==='item'){
-      const kindL=action.item==='spotion'?'Super Potion':'Potion';
-      const amt=action.item==='spotion'?120:60;
-      G.items[action.item]--;
-      const healed=Math.min(BT.me.stats[0],BT.me.hp+amt)-BT.me.hp;
-      BT.me.hp+=healed;
-      blog(`You used a ${kindL}! ${SPECIES[BT.me.sp][SP.NAME]} recovered ${healed} HP.`);
+      const LABEL={potion:'Potion',spotion:'Super Potion',hpotion:'Hyper Potion',revive:'Revive'};
+      const it=action.item,have=(G.items&&G.items[it])||0;
+      if(have<=0)blog('You reach into the bag, but it is empty.');
+      else if(it==='revive'){
+        const f=G.party.find(m=>m!==BT.me&&m.hp<=0);
+        if(!f)blog('Nobody needs reviving.');
+        else{G.items.revive--;f.hp=Math.max(1,Math.floor(f.stats[0]/2));
+          blog(`You used a Revive! ${SPECIES[f.sp][SP.NAME]} is back on its feet.`)}}
+      else{
+        const amt=HEAL_AMT[it]||60;
+        G.items[it]--;
+        const healed=Math.min(BT.me.stats[0],BT.me.hp+amt)-BT.me.hp;
+        BT.me.hp+=healed;
+        blog(`You used a ${LABEL[it]||'Potion'}! ${SPECIES[BT.me.sp][SP.NAME]} recovered ${healed} HP.`)}
       refreshBattle()}
     const spd=m=>{const a2=abilName(m);
       let v=statWith(m,5)*(m.status==='par'?0.25:1)*(a2==='Speed Boost'?1.5:1);
@@ -4206,7 +4370,8 @@ function resolveTurn(action){
         if(BT.trainer.queue.length){const n=BT.trainer.queue[0];
           blog(`${BT.trainer.name} sent out ${SPECIES[n.sp][SP.NAME]}!`);
           BT.foe=n;onSwitchIn(n,BT.me);refreshBattle();showActions();return}}
-      if(BT.gym){G.badges.push(BT.gym.index);
+      BT.over=true;
+      if(BT.gym){if(!G.badges.includes(BT.gym.index))G.badges.push(BT.gym.index);
         blog(`You defeated ${BT.gym.leader} and earned the ${BT.gym.badge}!`);F.node.gym.beaten=true}
       else if(BT.trainer&&BT.trainer.league&&BT.league){
         const L=BT.league,roster=leagueRoster(L.node);
@@ -4245,6 +4410,7 @@ function resolveTurn(action){
     if(next){BT.me=next;next.boosts=freshBoosts();next.flinched=false;
       blog(`Go, ${SPECIES[next.sp][SP.NAME]}!`);onSwitchIn(next,BT.foe);
       applyHazards(next,'me',blog);refreshBattle();showActions();return}
+    BT.over=true;
     blog('You have no Pokémon left…');
     G.party.forEach(m=>m.hp=Math.max(1,Math.floor(m.stats[0]*0.5)));
     if(BT.trainer&&BT.trainer.league){
@@ -4275,10 +4441,213 @@ function endBattle(won){setTimeout(()=>{
     m.disguiseBusted=false;m.iceFaceBroken=false;m.bondUsed=false;
     recalc(m);m.hp=Math.min(m.hp,m.stats[0])}
   bEl.classList.add('hide');BT.on=false;BT.gym=null;BT.trainer=null;BT.queue=[];
+  setTimeout(()=>{try{musicSync()}catch(e){}},60);
   BT.raid=false;BT.den=null;sync();renderParty();
   if(F.gen&&F.gen.den&&F.gen.den.cleared)F.gen.map.setObj(F.gen.den.x,F.gen.den.y,OBJ.NONE);
   draw()},won?900:600)}
 
+
+/* ===================== MUSIC =====================
+   The engine is Lumoria's (js/music.js) — same note table, same square-lead and
+   saw-bass voices, same noise-burst drums, same scaleNote over a mode, so a
+   theme written for one game sounds like it belongs in the other. What is new
+   here is the track list: Region Forge has habitats, and a habitat is exactly
+   the sort of thing a recipe describes — a mode, a tempo, a density and a lead
+   voice. A forest is dorian and unhurried; a cave is phrygian, slow and sparse;
+   a volcano is phrygian and fast. Nothing is sampled and nothing is fetched.  */
+const RFMusic=(()=>{
+  let ac=null,master=null,playing=false,cur=null,timer=null,vol=0.28,muted=false;
+  const NOTES={C:261.63,Cs:277.18,D:293.66,Ds:311.13,E:329.63,F:349.23,
+    Fs:369.99,G:392.00,Gs:415.30,A:440.00,As:466.16,B:493.88};
+  const NAMES=["C","Cs","D","Ds","E","F","Fs","G","Gs","A","As","B"];
+  const SCALES={minor:[0,2,3,5,7,8,10],major:[0,2,4,5,7,9,11],
+    phrygian:[0,1,3,5,7,8,10],dorian:[0,2,3,5,7,9,10],
+    lydian:[0,2,4,6,7,9,11],harmonic:[0,2,3,5,7,8,11]};
+  const freq=(n,o=4)=>(NOTES[n]||440)*Math.pow(2,o-4);
+  function init(){if(ac)return;
+    ac=new (window.AudioContext||window.webkitAudioContext)();
+    master=ac.createGain();master.gain.value=muted?0:vol;master.connect(ac.destination)}
+  function ensure(){if(!ac)init();if(ac.state==='suspended')ac.resume()}
+  function note(f,t,dur,wave='square',v=0.12){
+    if(!ac)return;
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.type=wave;o.frequency.value=f;
+    g.gain.setValueAtTime(v,t);
+    g.gain.exponentialRampToValueAtTime(0.001,t+Math.max(0.02,dur*0.95));
+    o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+0.02)}
+  /* A plucked string, the Karplus-Strong way: a burst of noise fed back through
+     a short delay that averages each pass, which is what makes it decay like a
+     string instead of fading like an oscillator. Used for the calmer places. */
+  function pluck(f,t,dur,v=0.16){
+    if(!ac)return;
+    const N=Math.max(2,Math.round(ac.sampleRate/f));
+    const len=Math.ceil(ac.sampleRate*dur);
+    const buf=ac.createBuffer(1,len,ac.sampleRate),d=buf.getChannelData(0);
+    const ring=new Float32Array(N);
+    for(let i=0;i<N;i++)ring[i]=Math.random()*2-1;
+    let idx=0;
+    for(let i=0;i<len;i++){
+      const nxt=(idx+1)%N;
+      const s2=0.5*(ring[idx]+ring[nxt])*0.996;
+      d[i]=ring[idx];ring[idx]=s2;idx=nxt}
+    const src=ac.createBufferSource(),g=ac.createGain();
+    src.buffer=buf;
+    g.gain.setValueAtTime(v,t);
+    g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+    src.connect(g);g.connect(master);src.start(t)}
+  /* A struck bar — marimba and bell — is a sine with a fast attack and a couple
+     of inharmonic partials over it. */
+  function bar(f,t,dur,v=0.14){
+    if(!ac)return;
+    [[1,v],[2.76,v*0.25],[5.4,v*0.1]].forEach(([mult,amp])=>{
+      const o=ac.createOscillator(),g=ac.createGain();
+      o.type='sine';o.frequency.value=f*mult;
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(amp,t+0.004);
+      g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+      o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+0.02)})}
+  function drum(t,type){
+    if(!ac)return;
+    if(type==='kick'){
+      const o=ac.createOscillator(),g=ac.createGain();
+      o.type='sine';o.frequency.setValueAtTime(150,t);
+      o.frequency.exponentialRampToValueAtTime(30,t+0.12);
+      g.gain.setValueAtTime(0.28,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.15);
+      o.connect(g);g.connect(master);o.start(t);o.stop(t+0.2);return}
+    const short=type==='hihat';
+    const n=Math.floor(ac.sampleRate*(short?0.03:0.08));
+    const b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0);
+    for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+    const src=ac.createBufferSource();src.buffer=b;
+    const g=ac.createGain();
+    if(short){const f=ac.createBiquadFilter();f.type='highpass';f.frequency.value=8000;
+      g.gain.setValueAtTime(0.055,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.03);
+      src.connect(f);f.connect(g)}
+    else{g.gain.setValueAtTime(0.14,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.08);
+      src.connect(g)}
+    g.connect(master);src.start(t)}
+  const VOICE={square:(f,t,d,v)=>note(f,t,d,'square',v),
+    tri:(f,t,d,v)=>note(f,t,d,'triangle',v*1.2),
+    saw:(f,t,d,v)=>note(f,t,d,'sawtooth',v*0.8),
+    pluck:(f,t,d,v)=>pluck(f,t,Math.max(0.12,d),v*1.3),
+    bar:(f,t,d,v)=>bar(f,t,Math.max(0.16,d),v*1.2)};
+  function seq(notes,t0,tempo,voice='square',v=0.12){
+    const beat=60/tempo;let t=t0;
+    for(const n of notes){
+      if(n.note&&n.note!=='R')(VOICE[voice]||VOICE.square)(freq(n.note,n.oct||4),t,beat*n.dur*0.9,v);
+      t+=beat*n.dur}
+    return t}
+  function bass(notes,t0,tempo,v=0.08){return seq(notes,t0,tempo,'saw',v)}
+  function drums(pat,t0,tempo){const beat=60/tempo;let t=t0;
+    for(const h of pat){if(h.type)drum(t,h.type);t+=beat*h.dur}return t}
+  function scaleOf(key,mode){
+    const ki=NAMES.indexOf(key),sc=SCALES[mode]||SCALES.minor;
+    return (deg,oct)=>{
+      const i=((deg%sc.length)+sc.length)%sc.length;
+      return {note:NAMES[(ki+sc[i])%12],oct:oct+Math.floor(deg/sc.length)}}}
+  /* Deterministic per track, so a theme is the same every time you hear it but
+     different from its neighbours — and the opening bar is varied separately,
+     because tracks that share a structure go same-y if only the seed moves. */
+  function rng32(str){let h=2166136261>>>0;
+    for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}
+    return ()=>{h^=h<<13;h>>>=0;h^=h>>17;h^=h<<5;h>>>=0;return h/4294967296}}
+  /* A recipe: key, mode, tempo, the lead's voice, how busy it is, and whether
+     it keeps a drum kit. Everything below is one of these. */
+  const R={
+    field:    {key:'C', mode:'major',    bpm:104,voice:'square',density:'walk', kit:true },
+    forest:   {key:'D', mode:'dorian',   bpm:92, voice:'pluck', density:'amble',kit:false},
+    mountain: {key:'A', mode:'minor',    bpm:84, voice:'tri',   density:'wide', kit:false},
+    cave:     {key:'E', mode:'phrygian', bpm:70, voice:'bar',   density:'sparse',kit:false},
+    coast:    {key:'G', mode:'lydian',   bpm:98, voice:'pluck', density:'amble',kit:true },
+    lake:     {key:'F', mode:'major',    bpm:88, voice:'bar',   density:'amble',kit:false},
+    sea:      {key:'D', mode:'dorian',   bpm:96, voice:'tri',   density:'wide', kit:true },
+    snow:     {key:'B', mode:'minor',    bpm:76, voice:'bar',   density:'sparse',kit:false},
+    volcano:  {key:'Cs',mode:'phrygian', bpm:128,voice:'saw',   density:'walk', kit:true },
+    town:     {key:'G', mode:'major',    bpm:100,voice:'pluck', density:'amble',kit:false},
+    indoor:   {key:'F', mode:'major',    bpm:86, voice:'bar',   density:'sparse',kit:false},
+    victory:  {key:'C', mode:'major',    bpm:132,voice:'square',density:'walk', kit:true },
+    wild:     {key:'A', mode:'minor',    bpm:142,voice:'square',density:'drive',kit:true },
+    trainer:  {key:'E', mode:'dorian',   bpm:150,voice:'square',density:'drive',kit:true },
+    gym:      {key:'E', mode:'phrygian', bpm:154,voice:'saw',   density:'drive',kit:true },
+    rival:    {key:'G', mode:'minor',    bpm:158,voice:'square',density:'drive',kit:true },
+    team:     {key:'C', mode:'phrygian', bpm:146,voice:'saw',   density:'drive',kit:true },
+    elite:    {key:'B', mode:'harmonic', bpm:160,voice:'saw',   density:'drive',kit:true },
+    champion: {key:'D', mode:'harmonic', bpm:168,voice:'saw',   density:'drive',kit:true }};
+  const DENSITY={sparse:[2,1.5,2,1.5],amble:[1,0.5,1,0.5,1,1],
+    wide:[1.5,1.5,1,1,2],walk:[0.5,0.5,1,0.5,0.5,1],drive:[0.5,0.5,0.5,0.5,0.25,0.25,0.5]};
+  function render(name,t0){
+    const r=R[name]||R.field;
+    const rnd=rng32('rf#music#'+name);
+    const sn=scaleOf(r.key,r.mode),beat=60/r.bpm;
+    const shape=DENSITY[r.density],lead=[];
+    /* the shape of the phrase, chosen once per track */
+    let deg=0;
+    const steps=r.density==='drive'?16:10;
+    for(let i=0;i<steps;i++){
+      const d=shape[i%shape.length];
+      if(rnd()<0.12){lead.push({note:'R',dur:d});continue}
+      deg+=Math.round((rnd()*4)-1.6);
+      deg=Math.max(-2,Math.min(9,deg));
+      lead.push({...sn(deg,r.density==='drive'?5:4),dur:d})}
+    /* a seeded opening bar, so two themes in the same mode do not start alike */
+    const intro=[];
+    const kind=Math.floor(rnd()*3);
+    if(kind===0)intro.push({...sn(0,r.density==='drive'?5:4),dur:1});
+    else if(kind===1){intro.push({...sn(4,4),dur:0.5},{...sn(2,4),dur:0.5})}
+    else intro.push({note:'R',dur:0.5},{...sn(0,5),dur:0.5});
+    const line=intro.concat(lead);
+    const total=line.reduce((a,n)=>a+n.dur,0);
+    seq(line,t0,r.bpm,r.voice,r.density==='drive'?0.1:0.11);
+    /* the bass walks the root and the fifth under it */
+    const bs=[];let acc=0;
+    while(acc<total){const d=r.density==='drive'?1:2;
+      bs.push({...sn(acc%4<2?0:4,r.density==='drive'?3:2),dur:d});acc+=d}
+    bass(bs,t0,r.bpm,r.density==='drive'?0.085:0.06);
+    if(r.kit){
+      const pat=[];let a2=0;
+      while(a2<total){
+        pat.push({type:'kick',dur:0.5},{type:'hihat',dur:0.5},
+                 {type:'snare',dur:0.5},{type:'hihat',dur:0.5});a2+=2}
+      drums(pat,t0,r.bpm)}
+    return total*beat}
+  function play(name){
+    if(muted)return;
+    if(cur===name&&playing)return;
+    stop();ensure();cur=name;playing=true;
+    (function loop(){
+      if(!playing||muted)return;
+      const dur=render(cur,ac.currentTime+0.06);
+      timer=setTimeout(loop,Math.max(600,dur*1000-90))})()}
+  function stop(){playing=false;cur=null;
+    if(timer){clearTimeout(timer);timer=null}}
+  function setVolume(v){vol=Math.max(0,Math.min(1,v));
+    if(master)master.gain.value=muted?0:vol}
+  function toggleMute(){muted=!muted;
+    if(master)master.gain.value=muted?0:vol;
+    if(muted)stop();
+    try{localStorage.setItem('rf.muted',muted?'1':'0')}catch(e){}
+    return muted}
+  function isMuted(){return muted}
+  function restore(){try{muted=localStorage.getItem('rf.muted')==='1'}catch(e){}}
+  return{init,play,stop,setVolume,toggleMute,isMuted,restore,
+    tracks:()=>Object.keys(R),render}})();
+/* Which theme belongs to where you are. Battles win over places. */
+function musicForPlace(){
+  if(!F||!F.node)return'field';
+  if(F.stack&&F.stack.length)return'indoor';
+  if(F.node.league)return'elite';
+  if(F.node.kind==='town')return'town';
+  return habitatOf(F.node)}
+function musicForBattle(){
+  if(BT.league)return BT.league.mem&&BT.league.mem.champion?'champion':'elite';
+  if(BT.trainer&&BT.trainer.rival)return'rival';
+  if(BT.trainer&&BT.trainer.evil)return'team';
+  if(BT.gym||(BT.trainer&&BT.trainer.rematch))return'gym';
+  if(BT.trainer)return'trainer';
+  return'wild'}
+function musicSync(){
+  if(RFMusic.isMuted())return;
+  RFMusic.play(BT.on?musicForBattle():musicForPlace())}
 /* ===================== PARTY ===================== */
 /* Gym badges come from hand-picked art pools — thirteen designs per type,
    packed into one spritesheet (13 cols x 18 rows of 48px cells, rows in dex
@@ -5116,7 +5485,30 @@ async function askLLM(premise){
     throw new Error(`${PROVIDER} returned ${r.status}. ${t.slice(0,140)}`)}
   const j=await r.json(),t=body.extract(j);
   if(!t)throw new Error('The writer returned nothing usable.');
-  return JSON.parse(t.replace(/^```json|```$/g,'').trim())}
+  return scrubBible(JSON.parse(t.replace(/^```json|```$/g,'').trim()))}
+/* Everything the writer sends back is text from somewhere else, and much of it
+   is placed into the page as markup — region names, leader names, badge names,
+   the syndicate's goal, route blurbs. Rather than trust dozens of render sites,
+   every string is cleaned once on the way in: angle brackets and ampersands go,
+   along with control characters, and lengths are capped so a runaway answer
+   cannot wreck a layout. Nothing downstream has to remember to be careful. */
+function scrubText(v){
+  return String(v)
+    .replace(/[\u0000-\u001F\u007F]/g,' ')
+    .replace(/[<>&]/g,'')
+    .replace(/\s+/g,' ')
+    .trim()
+    .slice(0,600)}
+function scrubBible(o,depth){
+  depth=depth||0;
+  if(depth>8)return null;
+  if(typeof o==='string')return scrubText(o);
+  if(Array.isArray(o))return o.slice(0,400).map(x=>scrubBible(x,depth+1));
+  if(o&&typeof o==='object'){
+    const out={};
+    for(const k of Object.keys(o).slice(0,200))out[scrubText(k).slice(0,60)]=scrubBible(o[k],depth+1);
+    return out}
+  return o}
 
 /* Built-in writer. Seven plot archetypes, each with its own vocabulary and its
    own beat sequence, so two regions do not read as the same sentence with a
@@ -5367,7 +5759,41 @@ function builtinBible(premise){
     rival:{name:(()=>{const used=new Set([boss,...gyms.map(g=>g.leader)]);
       const free=GIVEN.filter(x=>!used.has(x));
       return pick(rng,free.length?free:GIVEN)})(),arc:pick(rng,RIVAL_ARCS)(ctx)},
-    archetype:arch.id}}
+    archetype:arch.id,
+    /* the place the syndicate's story is about — a stand-in name until the map
+       exists, then swapped for a real landmark (see bindLorePlace) */
+    _place:ctx.place}}
+
+/* The lore is written before the map is drawn, so the syndicate's goal names a
+   place the map has never heard of: "drain the groundwater under Viridian
+   Bridge" in a region whose only Viridian is somewhere else entirely. Once the
+   map exists, pick a real landmark to be that place and rewrite every line
+   that mentions the stand-in — the goal, the method, the story beats, the
+   rival's backstory — so the story points somewhere you can actually go.
+   A landmark is preferred because the lines read like one ("the old mine
+   below…", "whatever sleeps under…"); a route or town will do if there is none. */
+function bindLorePlace(){
+  const stand=REGION&&REGION._place;
+  if(!stand||REGION._placeBound)return;
+  const rng=mulberry32(sfrom(SEED+'#loreplace'));
+  const pools=[
+    REGION.nodes.filter(n=>n.kind==='landmark'&&!n.shrine),
+    REGION.nodes.filter(n=>n.kind==='landmark'),
+    REGION.nodes.filter(n=>n.kind==='route'&&!n.victory),
+    REGION.nodes.filter(n=>n.kind==='town'&&!n.league)];
+  const pool=pools.find(p=>p.length);
+  if(!pool)return;
+  const site=pick(rng,pool);
+  const swap=v=>typeof v==='string'?v.split(stand).join(site.name):v;
+  const walk=o=>{
+    if(Array.isArray(o))return o.map(walk);
+    if(o&&typeof o==='object'){for(const k of Object.keys(o))o[k]=walk(o[k]);return o}
+    return swap(o)};
+  for(const k of ['team','beats','rival','motto','blurb'])
+    if(REGION[k]!==undefined)REGION[k]=walk(REGION[k]);
+  REGION.nodes.forEach(n=>{if(typeof n.blurb==='string')n.blurb=swap(n.blurb)});
+  REGION.lorePlace=site.id;
+  REGION._placeBound=true}
 
 /* ===================== RUN ===================== */
 const STEPS=[['bible','Region bible'],['graph','Atlas and level curve'],['field','Overworld']];
@@ -5406,6 +5832,16 @@ async function run(){
         .map(e=>{const a=Math.max(lo,Math.min(hi,e.min||lo)),b=Math.max(a,Math.min(hi,e.max||hi));
           return{...e,min:a,max:b}}))});
     REGION={...bible,nodes,world:built.world};
+    bindLorePlace();
+    /* Spurs, waterways and Victory Road are skipped above so they keep the
+       names the graph gave them — but that also skipped their wild Pokémon,
+       leaving well over a third of all routes empty, Victory Road included.
+       Every route gets a table stocked from its own habitat, with the same
+       four-species floor and shrine rule as everywhere else. */
+    nodes.forEach(n=>{
+      if(n.kind!=='route')return;
+      if(n.encounters&&n.encounters.length)return;
+      n.encounters=landmarkEncounters(n)});
     mark('graph','done',`${nodes.length} places · ${built.world.W}×${built.world.H} map`);
     mark('field','run');
     G.party=[];G.box=[];G.badges=[];G.balls=20;G.money=3000;G.seen=new Set();
@@ -5535,6 +5971,9 @@ function applySave(save){
   G.balls=save.G.balls??20;G.money=save.G.money??3000;
   G.items=save.G.items||{gball:0,uball:0,potion:0,spotion:0};
   G.seen=new Set(save.G.seen||[]);G.caught=new Set(save.G.caught||[]);
+  /* a save written before the repeated-badge fix may hold the same badge many
+     times over; keep one of each, in the order they were earned */
+  G.badges=[...new Set((G.badges||[]).filter(b=>Number.isInteger(b)&&b>=0&&b<8))];
   G.league=save.G.league||undefined;G.story=save.G.story||undefined;
   G.quest=save.G.quest||undefined;G.charm=!!save.G.charm;
   G.opts=save.G.opts||{shiny:'normal'};G.hof=save.G.hof||[];
@@ -6581,7 +7020,12 @@ document.getElementById('resetwts').onclick=async()=>{
 
 const keyEl=document.getElementById('key'),seedEl=document.getElementById('seed'),
   provEl=document.getElementById('prov'),modelEl=document.getElementById('model');
-keyEl.value=localStorage.getItem('rf.key')||'';
+keyEl.value=(()=>{
+  let k='';
+  try{k=sessionStorage.getItem('rf.key')||''}catch(e){}
+  if(!k){try{const old=localStorage.getItem('rf.key');
+    if(old){k=old;sessionStorage.setItem('rf.key',old);localStorage.removeItem('rf.key')}}catch(e){}}
+  return k})();
 seedEl.value=localStorage.getItem('rf.seed')||String(Math.floor(Math.random()*1e9));
 provEl.value=localStorage.getItem('rf.prov')||'none';
 const DEFAULT_MODEL={gemini:'gemini-2.5-pro',openai:'gpt-4o-mini',openrouter:'meta-llama/llama-3.3-70b-instruct:free'};
@@ -6592,7 +7036,13 @@ provEl.onchange=()=>{modelEl.value=DEFAULT_MODEL[provEl.value]||'';syncProvider(
 syncProvider();
 document.getElementById('go').onclick=()=>{
   PROVIDER=provEl.value;API_KEY=keyEl.value.trim();MODEL=modelEl.value.trim();SEED=seedEl.value.trim();
-  localStorage.setItem('rf.key',API_KEY);localStorage.setItem('rf.seed',SEED);
+  /* Every project page on casimbahadar.github.io shares one browser origin, so
+     anything in localStorage is readable by every other app there. A key the
+     player owns goes in sessionStorage instead: it survives reloads within the
+     tab and is gone when the tab closes. */
+  try{sessionStorage.setItem('rf.key',API_KEY)}catch(e){}
+  try{localStorage.removeItem('rf.key')}catch(e){}   // clear any key left by an older build
+  localStorage.setItem('rf.seed',SEED);
   localStorage.setItem('rf.prov',PROVIDER);run()};
 function renderJourneys(){
   try{renderCareerHOF()}catch(e){}
@@ -6603,11 +7053,24 @@ function renderJourneys(){
         list=document.getElementById('journeylist');
   if(!seeds.length){wrap.classList.add('hide');return}
   wrap.classList.remove('hide');
-  list.innerHTML=seeds.map(sd=>{const e=ix[sd];
-    return`<div class="card" data-j="${sd}" style="align-items:center">
-      <span><span class="nm">${e.name||sd}</span><br>
-        <span class="note">${e.badges||0} badge${e.badges===1?'':'s'} · ${e.party||'?'} in party · ¥${e.money??'—'}</span></span>
-      <span class="rt" data-del="${sd}" style="padding:6px 10px">×</span></div>`}).join('');
+  /* A seed is text the player typed and may well have been handed by someone
+     else, so it is never concatenated into markup. Built as elements, with the
+     seed set through dataset and textContent, it cannot become an attribute or
+     a tag no matter what it contains. */
+  list.textContent='';
+  seeds.forEach(sd=>{const e=ix[sd];
+    const card=document.createElement('div');
+    card.className='card';card.dataset.j=sd;card.style.alignItems='center';
+    const left=document.createElement('span');
+    const nm=document.createElement('span');nm.className='nm';
+    nm.textContent=e.name||sd;
+    const note=document.createElement('span');note.className='note';
+    note.textContent=`${e.badges||0} badge${e.badges===1?'':'s'} · ${e.party||'?'} in party · ¥${e.money??'—'}`;
+    left.appendChild(nm);left.appendChild(document.createElement('br'));left.appendChild(note);
+    const del=document.createElement('span');
+    del.className='rt';del.dataset.del=sd;del.style.padding='6px 10px';del.textContent='×';
+    card.appendChild(left);card.appendChild(del);
+    list.appendChild(card)});
   list.querySelectorAll('[data-del]').forEach(x=>x.onclick=ev=>{
     ev.stopPropagation();
     const sd=x.dataset.del;
@@ -6646,6 +7109,36 @@ function setControlMode(){
 setControlMode();
 if(window.matchMedia)try{
   window.matchMedia('(pointer:coarse)').addEventListener('change',setControlMode)}catch(e){}
+{const ck=document.getElementById('clearkey');
+ if(ck)ck.onclick=e=>{e.preventDefault();
+   try{sessionStorage.removeItem('rf.key')}catch(_){}
+   try{localStorage.removeItem('rf.key')}catch(_){}
+   const k=document.getElementById('key');if(k)k.value='';
+   API_KEY='';toast('Key forgotten.')}}
+/* Browsers only allow audio to begin from a real gesture, so the first tap on
+   the sound button is what creates the audio context. Nothing plays uninvited. */
+RFMusic.restore();
+{const mb=document.getElementById('mutebtn'),vs=document.getElementById('vol');
+ const label=()=>{if(mb)mb.textContent=RFMusic.isMuted()?'♪ sound: off':'♪ sound: on'};
+ if(mb){mb.onclick=()=>{
+   const nowMuted=RFMusic.toggleMute();
+   if(!nowMuted){RFMusic.init();try{musicSync()}catch(e){}}
+   label()};
+   /* a fresh visitor starts silent until they ask for sound */
+   if(!RFMusic.isMuted())RFMusic.toggleMute();
+   label()}
+ if(vs){vs.oninput=()=>RFMusic.setVolume(vs.value/100);
+   try{const v=localStorage.getItem('rf.vol');if(v!==null){vs.value=v;RFMusic.setVolume(v/100)}}catch(e){}
+   vs.onchange=()=>{try{localStorage.setItem('rf.vol',vs.value)}catch(e){}}}}
+{const tb=document.getElementById('themebtn');
+ const meta=document.querySelector('meta[name="theme-color"]');
+ const apply=t=>{document.documentElement.setAttribute('data-theme',t);
+   if(tb)tb.textContent=t==='dark'?'Light':'Dark';
+   if(meta)meta.setAttribute('content',t==='dark'?'#0F1311':'#F4EFE4')};
+ apply(document.documentElement.getAttribute('data-theme')||'light');
+ if(tb)tb.onclick=()=>{
+   const next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+   apply(next);try{localStorage.setItem('rf.theme',next)}catch(e){}}}
 addEventListener('resize',()=>{if(REGION){drawAtlas();fit();draw()}});
 window.RF={T,TER,OBJ,WC,countBends,growTo,shapeFrom,forceShape:v=>{FORCE_SHAPE=v},ARRANGE,SHAPES,spriteFallback,PS,sheetSprite,OW,owFrame,readOWFields,openStory,genGraph,mulberry32,sfrom,gymLevelFor,setLabels:v=>{ATLAS_LABELS=v;if(REGION)drawAtlas()},setZoom,centreAtlas,atlasCell,buildRegionAtlas,shadeField,releaseStick,climateFrom,SNOW_WORDS,FIRE_WORDS,WT,WPX,INPUT,readStick,clearInput,heldKeys,applyHeldKeys,canSurf,landmarkEncounters,startShrine,startRaid,denDistorted,specialPools,foeSwitchChoice,foeBench,swapFoeTo,enterInterior,leaveInterior,interiorStep,genInterior,openShop,usePotion,SHOP_STOCK,openBattle,DISTORT_NUMS,setTop,usedRows,variantIndex,setSheetRows,getPage:()=>PAGE,renderVariantStrip,WTSU,loadWorldSheet,wAutoGuess,applyWTileset,drawWSheet,WTS,WROLES,WROLE_LABEL,MC,genWorld,makeNamer,ARCHETYPES,NAME,SOLID_TER,SOLID_OBJ,blank,edgeOffset,drawCell,blitRole,cfgForBiome,renderPickMode,TER_ROLES,OBJ_ROLES,SOLID,SP,MV,TSU,TS:()=>TS,loadSheetImage,autoGuess,applyTileset,drawSheet,ROLE_LABEL,SPECIES,MOVES,TYPES,CHART,EXPT,NATURES,ABIL,byName,TYPE_HEX,tcol,ROLES,
   calcStat,recalc,makeMon,damage,tryCatch,expGain,giveExp,giveEVs,typeEff,movesAt,aiChoose,
