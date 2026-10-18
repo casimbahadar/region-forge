@@ -1,0 +1,203 @@
+{
+  "tileSize": 32,
+  "roles": {
+    "grass": {
+      "mode": "edge9",
+      "origin": [
+        0,
+        0
+      ],
+      "byBiome": {
+        "2": {
+          "origin": [
+            0,
+            144
+          ]
+        },
+        "5": {
+          "origin": [
+            3,
+            60
+          ]
+        },
+        "6": {
+          "origin": [
+            0,
+            905
+          ]
+        }
+      }
+    },
+    "tall": {
+      "mode": "edge9",
+      "origin": [
+        0,
+        18
+      ]
+    },
+    "path": {
+      "mode": "edge9",
+      "origin": [
+        0,
+        21
+      ],
+      "byBiome": {
+        "6": {
+          "origin": [
+            0,
+            54
+          ]
+        }
+      }
+    },
+    "water": {
+      "mode": "edge9",
+      "origin": [
+        0,
+        45
+      ],
+      "byBiome": {
+        "6": {
+          "origin": [
+            3,
+            74
+          ]
+        }
+      }
+    },
+    "sand": {
+      "mode": "edge9",
+      "origin": [
+        3,
+        33
+      ],
+      "byBiome": {
+        "5": {
+          "origin": [
+            3,
+            60
+          ]
+        },
+        "6": {
+          "origin": [
+            0,
+            905
+          ]
+        }
+      }
+    },
+    "ledge": {
+      "mode": "edge9",
+      "origin": [
+        3,
+        21
+      ]
+    },
+    "house": {
+      "mode": "block",
+      "origin": [
+        1,
+        367
+      ],
+      "w": 5,
+      "h": 3
+    },
+    "mart": {
+      "mode": "block",
+      "origin": [
+        1,
+        349
+      ],
+      "w": 4,
+      "h": 4
+    },
+    "gym": {
+      "mode": "block",
+      "origin": [
+        4,
+        838
+      ],
+      "w": 3,
+      "h": 4
+    },
+    "tree": {
+      "mode": "variants",
+      "tiles": [
+        [
+          3,
+          150
+        ],
+        [
+          0,
+          154
+        ],
+        [
+          3,
+          156
+        ]
+      ],
+      "byBiome": {
+        "5": {
+          "tiles": [
+            [
+              3,
+              515
+            ],
+            [
+              7,
+              117
+            ]
+          ]
+        },
+        "6": {
+          "tiles": [
+            [
+              0,
+              308
+            ],
+            [
+              2,
+              386
+            ]
+          ]
+        }
+      }
+    },
+    "tree_small": {
+      "mode": "variants",
+      "tiles": [
+        [
+          0,
+          157
+        ]
+      ],
+      "byBiome": {
+        "5": {
+          "tiles": [
+            [
+              6,
+              121
+            ]
+          ]
+        },
+        "6": {
+          "tiles": [
+            [
+              2,
+              386
+            ]
+          ]
+        }
+      }
+    },
+    "center": {
+      "mode": "block",
+      "origin": [
+        0,
+        343
+      ],
+      "w": 5,
+      "h": 5
+    }
+  }
+}
